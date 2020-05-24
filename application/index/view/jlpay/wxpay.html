@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+    <link rel="shortcut icon" href="#"/>
+    <title>支付</title>
+    <style type="text/css">
+        *:not(span) {
+            padding: 0;
+            margin: 0;
+            font-size: 5vw;
+        }
+        body {
+            height: 100vh;
+        }
+        /*内容水平垂直居中*/
+        .middle {
+            display: -webkit-box;
+            -webkit-box-align: center;
+            -webkit-box-pack: center;
+            -webkit-box-orient: block-axis;
+            width: 100%;
+            height: 20%;
+        }
+        /*窄元素*/
+        .narrow {
+            display: block;
+            width: 80%;
+            margin: 3% auto;
+            text-align: center;
+        }
+        /*按钮*/
+        .buttons {
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            -ms-appearance: none;
+            outline: none;
+            border: none;
+            display: inline-block;
+            vertical-align: middle;
+            border-radius: 1vw;
+            color: #fff;
+            width: 100%;
+            background-color: #01aefe;
+            padding: 2.5% 0;
+            margin: 4% auto;
+            text-align: center;
+        }
+    </style>
+</head>
+<body ng-app="myApp" ng-controller="searchDataCtrl">
+<div class="middle">
+    <p>订单号：<span>{$orderId}</span></p>
+</div>
+<div class="narrow">
+    <p>金额</p>
+    <p style="color: #f64646; zoom: 200%;">¥<span>{$fee}</span></p>
+</div>
+
+<form action="" class="narrow">
+    <p style="zoom: 75%;">请选择支付方式，或投币完成支付！</p>
+    <input type="hidden" name="amount" value=""/>
+    <input type="hidden" name="orderId" value=""/>
+    <input type="hidden" name="eid" value=""/>
+
+    <input type="button" id="wx" onclick="callpay()" style="background-color: #23c203;" class="buttons" value="微信"/>
+</form>
+</body>
+<script type="text/javascript" src="__STATIC__/js/jquery.js"></script>
+
+<script type="text/javascript">
+
+    function jsApiCall() {
+        WeixinJSBridge.invoke(
+            'getBrandWCPayRequest',
+            {$name},
+            function(res){
+                // WeixinJSBridge.log(res.err_msg);
+                //  alert(res.err_code+res.err_desc+res.err_msg);
+                if (res.err_msg == 'get_brand_wcpay_request:ok'){
+                    window.location="http://lang.tech100.com.cn/html/user/transfer.html?orderId={$orderId}&eid={$eid}";
+                }else {
+                    // alert(res.err_msg);
+                    window.location="http://lang.tech100.com.cn/html/user/fail.html";
+                }
+            }
+        );
+    }
+
+    function callpay() {
+        if (typeof WeixinJSBridge == "undefined"){
+            if( document.addEventListener ){
+                document.addEventListener('WeixinJSBridgeReady', jsApiCall, false);
+            }else if (document.attachEvent){
+                document.attachEvent('WeixinJSBridgeReady', jsApiCall);
+                document.attachEvent('onWeixinJSBridgeReady', jsApiCall);
+            }
+        }else{
+            jsApiCall();
+        }
+    }
+
+</script>
+</html>

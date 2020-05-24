@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+    <script type="text/javascript" src="__STATIC__/js/jquery.js"></script>
+    <link rel="stylesheet" href="__STATIC__/css/overAll.css"/>
+    <title>请选择支付</title>
+    <style type="text/css">
+        /*/!*头部*!/*/
+        #header {
+            padding: 3% 0;
+            text-align: left;
+            text-indent: 1em;
+        }
+        #header p {
+            margin: 5% 0;
+        }
+        /*单选框*/
+        #ciShu input[type="radio"] {
+            -webkit-appearance: none;
+            outline: none;
+            position: relative;
+            background: white;
+            border-radius: 1vw;
+            border: #4d4c4c solid 0.1vw;
+            color: black;
+            width: 27%;
+            height: 9vw;
+            margin: 4% 3%;
+        }
+        #ciShu input[type="radio"]:checked {
+            background: white;
+            border-radius: 1vw;
+            color: #01aefe;
+            border: #01aefe solid 0.2vw;
+        }
+        #ciShu input[type="radio"]:before {
+            content: attr(data-content);
+            position: absolute;
+            font-size: 4vw;
+            top: 20%;
+            left: 38%;
+        }
+        /*数字框*/
+        #number {
+            margin: 7% auto;
+        }
+        #number_input {
+            width: 23%;
+            margin: 0 auto;
+            padding: 2%;
+            text-align: center;
+            border-radius: 1vw;
+            outline: none;
+            border: #4d4c4c solid 0.1vw;
+        }
+        #number_input::-webkit-inner-spin-button{
+            -webkit-appearance: none;
+        }
+        /*增减号*/
+        .number_change {
+            vertical-align: middle;
+            margin: 0 5%;
+            width: 7%;
+            height: 7vw;
+        }
+        /*提示文字*/
+        .prompt {
+            color: #fd5555;
+            font-size: 3vw;
+            margin: 2% 0;
+        }
+    </style>
+</head>
+<body>
+<div id="header" ng-model="goodsList">
+    <p>所属商家：<span id="u_name"></span></p>
+    <p>当前设备：<span id="name"></span></p>
+    <p>所在位置：<span id="address"></span></p>
+</div>
+<form action="{:url('pay/pay')}" method="get">
+    <div class="center">
+        <p class="title">请选择游玩次数(20游币/次)</p>
+        <div id="ciShu"></div>
+        <div id="number">
+            <img class="number_change" src="__STATIC__/images/jian.jpg" onclick="change('number_input',false)"/>
+            <input id="number_input" name="ci" type="number" placeholder="请输入数字" value="0"/>
+            <img class="number_change" src="__STATIC__/images/jia.jpg" onclick="change('number_input',true)"/>
+            <input type="hidden" name="eid" value="{$eid}"/>
+            <input type="hidden" name="amount" id="amount"/>
+        </div>
+        <div id="footer">
+            <input class="buttons" type="submit" value="支付¥0元" id="submit" onclick="return judge()"/>
+            <a href="{:url('pay/useCode')}" class="buttons">使用免费码</a>
+            <a href="https://mp.weixin.qq.com/mp/profile_ext?action=home&__biz=MzU2MjYxODM5OA==&scene=124#wechat_redirect" class="buttons">关注公众号申请免费码</a>
+            <p class="prompt">温馨提示：支付1人民币可获得10游币</p>
+        </div>
+    </div>
+</form>
+</body>
+<script type="text/javascript">
+    //设备信息
+    var eid = {$eid};
+    sessionStorage.setItem("eid", eid);
+    $.ajax({
+        url: '{:url("equipment/eq_info")}',
+        dataType: "json",
+        data: {
+            eid: eid
+        },
+        success: function (res) {
+            var data = JSON.parse(res),
+                    dat = data.data;
+            $.ajax({
+                url: "{:url('merchant/info')}",
+                dataType: "json",
+                async: false,
+                data: {
+                    mid: dat.mid
+                },
+                success: function (res1) {
+                    var data1 = JSON.parse(res1),
+                            dat1 = data1.data;
+                    $("#u_name").text(dat1.name);
+                }
+            });
+            $("#name").text(dat.name);
+            $("#address").text(dat.address);
+        }
+    });
+    //次数选择框
+    var amount = $("#amount"),
+            submit = $("#submit");
+    var ciShu = "";
+    for (var i = 1; i < 10; i++) {
+        ciShu += "<input type='radio' name='ciShu' data-content='" + i + "次' value='" + i + "'/>";
+    }
+    $("#ciShu").html(ciShu);
+    var radio = $('input:radio'),
+        number = $("#number_input");
+    radio.click(function () {
+        var val = $(this).val();
+        number.val(val);
+        amount.val(number.val() * 2);
+        submit.val("支付¥" + number.val() * 2 + "元");
+    });
+    //增减按钮
+    function change(x, y) {
+        radio.attr("checked",false);
+        var num = new Number(document.getElementById(x).value);
+        if (y) {
+            document.getElementById(x).value = num + 1;
+        } else if(num > 0) {
+            document.getElementById(x).value = num - 1;
+        }
+        amount.val(number.val() * 2);
+        submit.val("支付¥" + number.val() * 2 + "元");
+    }
+    //次数判断
+    function judge() {
+        if (number.val() == 0) {
+            return false;
+        }
+    }
+</script>
+</html>

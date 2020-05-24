@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>后台登录-支付api 2.0</title>
+	<meta name="renderer" content="webkit|ie-comp|ie-stand">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi" />
+    <meta http-equiv="Cache-Control" content="no-siteapp" />
+
+    <link rel="shortcut icon" href="../../../../index.php" type="image/x-icon" />
+    <link rel="stylesheet" href="__STATIC__/css/font.css">
+	<link rel="stylesheet" href="__STATIC__/css/xadmin.css">
+    <script type="text/javascript" src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+    <script src="__STATIC__/lib/layui/layui.js" charset="utf-8"></script>
+    <script type="text/javascript" src="__STATIC__/js/xadmin.js"></script>
+
+</head>
+<body class="login-bg">
+    
+    <div class="login layui-anim layui-anim-up">
+        <input type="text" style="border:0;height: 20px;color: red;" id="msg" value="">
+        <div class="message">管理登录</div>
+        <div id="darkbannerwrap"></div>
+        
+        <form method="post" class="layui-form" >
+            <input name="username" placeholder="用户名/手机号" id="username"  type="text" lay-verify="required" class="layui-input" >
+            <hr class="hr15">
+            <input name="password" lay-verify="required" id="password" placeholder="密码"  type="password" class="layui-input">
+            <hr class="hr15">
+            <input value="登录" lay-submit lay-filter="login" style="width:100%;" type="button" onclick="button()">
+            <hr class="hr20" >
+           <div align="center"><a href="{:url('adder')}">注册</a></div>
+        </form>
+    </div>
+
+    <script>
+        function button(){
+        var username=document.getElementById('username').value;
+        var password=document.getElementById('password').value;
+        $.ajax({
+            type: "post",
+            data:{username:username,password:password},
+            url: "{:url('index')}",
+            success:function (data) {
+                console.log(data);
+                if (data['msg']=="登录失败"){
+                    document.getElementById('msg').value=data['msg'];
+                }
+                if (data['msg']="登录成功"){
+                    window.location.href = (data.url);
+                }
+
+            }
+        })
+        }
+
+
+            $(function  () {
+                layui.use('form', function(){
+                  var form = layui.form;
+                  layer.msg('玩命卖萌中', function(){
+                    //关闭后的操作
+                    });
+                  //监听提交
+                  form.on('submit(login)', function(data){
+                    // alert(888)
+                    layer.msg(JSON.stringify(data.field),function(){
+                        location.href='index.html'
+                    });
+                    return false;
+                  });
+                });
+            })
+    </script>
+</body>
+</html>

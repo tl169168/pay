@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+    <script type="text/javascript" src="__STATIC__/js/jquery.js"></script>
+    <link rel="stylesheet" href="__STATIC__/css/poly-style.css"/>
+    <title>您需要支付</title>
+</head>
+<body ng-app="myApp" ng-controller="searchDataCtrl">
+<div class="middle" style="background: none; color: #6f6f6f;">
+    <p>订单号：<span>{$orderId}</span></p>
+</div>
+<div class="narrow">
+    <p>金额</p>
+    <p style="color: #f64646;" class="strong"><span>{$fee}</span></p>
+</div>
+
+<form action="" class="narrow">
+    <p class="small">请选择支付方式，或投币完成支付！</p>
+    <input type="hidden" name="amount" value=""/>
+    <input type="hidden" name="orderId" value=""/>
+    <input type="hidden" name="eid" value=""/>
+    <input type="button" onclick="callali()" class="buttons button_dark" value="支付宝"/>
+
+</form>
+</body>
+<script type="text/javascript" src="__STATIC__/js/poly-script.js"></script>
+<script type="text/javascript">
+  function callali() {
+      window.location = "{$ali}";
+  }
+</script>
+</html>
